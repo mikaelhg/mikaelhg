@@ -2,6 +2,8 @@
 
 ![My job is to help people invest in software.](https://github.com/mikaelhg/mikaelhg/raw/master/job.png)
 
+![Some tools from the past 24 months](https://github.com/mikaelhg/mikaelhg/raw/master/tools.png)
+
 <!--
 **mikaelhg/mikaelhg** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
 
