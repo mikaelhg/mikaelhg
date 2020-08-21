@@ -1,4 +1,4 @@
-### Hi there 👋
+![Hands-on architect](https://github.com/mikaelhg/mikaelhg/raw/master/hoa.png)
 
 <!--
 **mikaelhg/mikaelhg** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
