@@ -1,20 +1,25 @@
-![Hands-on architect.](https://github.com/mikaelhg/mikaelhg/raw/master/hoa.png)
+Hi, friend.
 
-![My job is to help people invest in software.](https://github.com/mikaelhg/mikaelhg/raw/master/job.png)
+As you can tell from the numerous identifiers and links on this profile page,
+I'm Mikael Gueck, a software architect from Helsinki.
 
-![Some tools from the past 24 months](https://github.com/mikaelhg/mikaelhg/raw/master/tools.png)
+You can reach me at gumi@iki.fi or +358405168122.
 
-<!--
-**mikaelhg/mikaelhg** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
+On this profile page you'll find a bunch of hobby projects I've worked on over the years,
+in order to scratch an itch, or learn about one technology or another.
 
-Here are some ideas to get you started:
+Some repos named "POC" or "repro" might exist to demonstrate some issue in a product,
+or its use in general.
 
-- 🔭 I’m currently working on ...
-- 🌱 I’m currently learning ...
-- 👯 I’m looking to collaborate on ...
-- 🤔 I’m looking for help with ...
-- 💬 Ask me about ...
-- 📫 How to reach me: ...
-- 😄 Pronouns: ...
-- ⚡ Fun fact: ...
--->
+Professionally, I like to work on practical product development matters.
+
+As a software architect, I'll tease out specs and requirements through discussion with customers,
+clients and stakeholders, and help turn those into executable implementation and maintenance plans.
+
+I'm at my best when the business focus for execution is on making sure that a small team is able
+to concentrate on producing business value, rather than on extraneous complications. In practise,
+this means carefully limiting the scope of work to that which is required by pressing business need,
+and refraining to introduce complications, which will require an amount of maintenance that is not
+in line with the business value they produce.
+
+Taking part in practical software development, as a developer, is what I enjoy the most in my workday.
