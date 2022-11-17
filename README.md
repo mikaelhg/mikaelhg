@@ -23,3 +23,6 @@ built the tests that verify the first part. Third, when I refactor everything to
 Over the last 25 years, I've incorporated avoiding recurring issues into my style. 
 Now, when I have to discuss a class of issues, I might have little to say, because I don't 
 see that class, since my style avoids it, and I've forgotten why and how I added that part.
+
+Luckily most times I can come up with some post-hoc rationalisation of those style rules 
+which might help a colleague in a code review, but I don't have 25 years of notes to verify that.
