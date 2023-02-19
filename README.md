@@ -1,10 +1,10 @@
 Hi, friend. You can reach me at gumi@iki.fi or +358405168122.
 
-On this profile page you'll find a bunch of hobby projects I've worked on over the years,
+On this account, you'll find a bunch of hobby projects I've worked on over the years,
 in order to scratch an itch, or learn about one technology or another.
-
-Some repos named "POC" or "repro" might exist to demonstrate some issue in a product,
+Some repos named "POC" or "repro" might exist to demonstrate some issue with a product,
 or its use in general.
+Work stuff goes on the work account.
 
 As a software developer and architect, I tease out specs and requirements through discussion
 with customers, clients and stakeholders, and help turn those into executable implementation
