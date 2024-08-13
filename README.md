@@ -1,3 +1,5 @@
+<img src="./gumi.webp" width=250 align=right>
+
 Hi, friend. You can reach me at gumi@iki.fi or +358405168122.
 
 I'm a backend developer and architect working on modern stuff, 
