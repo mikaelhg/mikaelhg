@@ -1,0 +1,228 @@
+name: 🎭 GitHub Script Output Demo
+
+on:
+  workflow_dispatch:
+    inputs:
+      demo_message:
+        description: 'Custom message to include in the demo'
+        required: false
+        default: 'Hello from the workflow!'
+        type: string
+
+jobs:
+  script_showcase:
+    name: 🎬 Script Output Examples
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 🎯 Basic Output Demo
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const timestamp = new Date().toISOString();
+            
+            // Create step outputs
+            core.setOutput('demo_time', timestamp);
+            core.setOutput('runner_os', process.env.RUNNER_OS);
+            
+            // Set environment variables
+            core.exportVariable('DEMO_TIMESTAMP', timestamp);
+            
+            // Basic console output with formatting
+            console.log(`
+              📅 Current Time (UTC): ${timestamp}
+              🖥️ Runner OS: ${process.env.RUNNER_OS}
+              👤 Current User: @${context.actor}
+              💬 Custom Message: ${{ inputs.demo_message }}
+            `);
+
+      - name: 📝 Create Job Summary
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const summary = `
+              # 🚀 GitHub Script Demo Summary
+
+              ## System Information
+              | Key | Value |
+              |-----|-------|
+              | **Timestamp** | \`${process.env.DEMO_TIMESTAMP}\` |
+              | **Runner** | ${process.env.RUNNER_OS} |
+              | **Actor** | @${context.actor} |
+              | **Repository** | ${context.repo.owner}/${context.repo.repo} |
+
+              ## 📊 Demo Statistics
+              \`\`\`mermaid
+              pie title "Demo Metrics"
+                  "Success" : 85
+                  "Warning" : 10
+                  "Error" : 5
+              \`\`\`
+
+              ## 🎨 Custom Styling
+              <details>
+              <summary>Click to expand!</summary>
+
+              - ✨ Feature 1
+              - 🎯 Feature 2
+              - 🔄 Feature 3
+              </details>
+            `;
+            
+            await core.summary
+              .addRaw(summary)
+              .write();
+
+      - name: 🎯 Create Annotations
+        uses: actions/github-script@v7
+        with:
+          script: |
+            // Demo different types of annotations
+            core.notice(`ℹ️ This is an informational notice at ${process.env.DEMO_TIMESTAMP}`);
+            
+            const warningMessage = `
+              ⚠️ Warning Example
+              - Time: ${process.env.DEMO_TIMESTAMP}
+              - User: @${context.actor}
+              - Runner: ${process.env.RUNNER_OS}
+            `;
+            core.warning(warningMessage);
+            
+            // Create a more detailed error annotation
+            const errorMessage = `
+              ❌ Demo Error Details
+              - File: src/demo.js
+              - Line: 42
+              - Time: ${process.env.DEMO_TIMESTAMP}
+              - User: @${context.actor}
+            `;
+            
+            core.error({
+              title: 'Demo Error',
+              file: 'src/demo.js',
+              startLine: 42,
+              endLine: 42,
+              message: errorMessage
+            });
+
+      - name: 🔄 API Integration Demo
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            // Get repository information
+            const repo = await github.rest.repos.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo
+            });
+            
+            const issueBody = `
+              ## 🤖 API Integration Demo Results
+
+              ### Repository Info
+              - **Name**: ${repo.data.name}
+              - **Stars**: ${repo.data.stargazers_count}
+              - **Forks**: ${repo.data.forks_count}
+              - **Created**: ${new Date(repo.data.created_at).toISOString()}
+
+              ### Demo Run Details
+              - **Run ID**: ${context.runId}
+              - **Triggered By**: @${context.actor}
+              - **Timestamp**: ${process.env.DEMO_TIMESTAMP}
+
+              ---
+              *This comment was created automatically by the GitHub Script demo workflow*
+            `;
+            
+            // Log the info to the console
+            console.log(`
+              📊 Repository Statistics:
+              ${JSON.stringify(repo.data, null, 2)}
+            `);
+            
+            // Add to job summary
+            await core.summary
+              .addHeading('📈 API Integration Results')
+              .addRaw(issueBody)
+              .write();
+
+      - name: 📦 Create Artifact with Results
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const path = require('path');
+            
+            // Create a results object
+            const results = {
+              timestamp: process.env.DEMO_TIMESTAMP,
+              runner: process.env.RUNNER_OS,
+              actor: context.actor,
+              repository: `${context.repo.owner}/${context.repo.repo}`,
+              runId: context.runId,
+              customMessage: '${{ inputs.demo_message }}'
+            };
+            
+            // Create directory for artifacts
+            fs.mkdirSync('demo-results', { recursive: true });
+            
+            // Write results to a JSON file
+            fs.writeFileSync(
+              path.join('demo-results', 'results.json'),
+              JSON.stringify(results, null, 2)
+            );
+            
+            // Create a markdown report
+            const markdownContent = `
+              # GitHub Script Demo Results
+
+              ## Run Information
+              - **Timestamp**: ${results.timestamp}
+              - **Runner**: ${results.runner}
+              - **Actor**: @${results.actor}
+              - **Repository**: ${results.repository}
+              - **Run ID**: ${results.runId}
+              - **Custom Message**: ${results.customMessage}
+
+              ## Environment Details
+              \`\`\`json
+              ${JSON.stringify(results, null, 2)}
+              \`\`\`
+            `;
+            
+            fs.writeFileSync(
+              path.join('demo-results', 'report.md'),
+              markdownContent.trim()
+            );
+
+      - name: ⬆️ Upload Results
+        uses: actions/upload-artifact@v4
+        with:
+          name: script-demo-results-${{ github.run_id }}
+          path: demo-results/
+          retention-days: 7
+
+      - name: 🎉 Final Status Update
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const finalSummary = `
+              # ✅ Workflow Complete
+
+              ## Summary
+              - **Completion Time**: ${new Date().toISOString()}
+              - **Duration**: ${Date.now() - new Date(process.env.DEMO_TIMESTAMP).getTime()}ms
+              - **User**: @${context.actor}
+              - **Run ID**: ${context.runId}
+
+              ## Next Steps
+              1. Check the artifacts for detailed reports
+              2. Review the job summary for visualizations
+              3. Examine any annotations created during the run
+            `;
+            
+            await core.summary
+              .addRaw(finalSummary)
+              .write();
+            
+            console.log(`✨ Demo workflow completed by @${context.actor} at ${new Date().toISOString()}`);
