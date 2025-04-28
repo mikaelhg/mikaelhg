@@ -113,8 +113,6 @@ jobs:
       - name: ✍️ Add More Details to Summary
         run: |
           cat << EOF >> $GITHUB_STEP_SUMMARY
-
-          ---
           ## 📊 Simulated Processing Results
 
           Processing completed for Build ID: \`${{ needs.generate_metadata.outputs.build_id }}\`
