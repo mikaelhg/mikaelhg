@@ -1,0 +1,127 @@
+name: ✨ Fake Build Demo - Output Showcase ✨
+
+on:
+  workflow_dispatch: # Allow manual triggering
+
+jobs:
+  # =========================================
+  # Job 1: Simulate Generation & Basic Output
+  # =========================================
+  generate_metadata:
+    name: ⚙️ Generate Fake Metadata
+    runs-on: ubuntu-latest
+    outputs: # Define outputs for other jobs to use
+      build_version: ${{ steps.set_info.outputs.version }}
+      build_id: ${{ steps.set_info.outputs.unique_id }}
+      build_status_env: ${{ steps.set_env.outputs.status_msg }} # Outputting what was set in ENV
+
+    steps:
+      - name: 📦 Checkout Code (Placeholder)
+        uses: actions/checkout@v4
+        # In a real build, you'd check out code here
+
+      - name: 🏷️ Set Fake Build Info (Step Output)
+        id: set_info # Give this step an ID to reference its outputs
+        run: |
+          FAKE_VERSION="1.5.${{ github.run_number }}"
+          FAKE_ID="build-$(date +%s)-${RANDOM}"
+          echo "Simulating setting build info..."
+          echo "version=${FAKE_VERSION}" >> $GITHUB_OUTPUT
+          echo "unique_id=${FAKE_ID}" >> $GITHUB_OUTPUT
+          echo "Generated Version: ${FAKE_VERSION}"
+          echo "Generated ID: ${FAKE_ID}"
+          sleep 1 # Simulate work
+
+      - name: 🌍 Set Environment Variable
+        id: set_env
+        run: |
+          STATUS_MESSAGE="✅ Simulated Success"
+          echo "Setting BUILD_STATUS environment variable..."
+          echo "BUILD_STATUS=${STATUS_MESSAGE}" >> $GITHUB_ENV
+          # Also make it available as a step output if needed elsewhere
+          echo "status_msg=${STATUS_MESSAGE}" >> $GITHUB_OUTPUT
+          sleep 1 # Simulate work
+
+      - name: 📝 Add Initial Info to Summary
+        run: |
+          echo "## 🚀 Build Metadata Generation" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY # Blank line for spacing
+          echo "| Key             | Value                                     |" >> $GITHUB_STEP_SUMMARY
+          echo "|-----------------|-------------------------------------------|" >> $GITHUB_STEP_SUMMARY
+          echo "| **Version**     | \`${{ steps.set_info.outputs.version }}\`          |" >> $GITHUB_STEP_SUMMARY
+          echo "| **Build ID**    | \`${{ steps.set_info.outputs.unique_id }}\`    |" >> $GITHUB_STEP_SUMMARY
+          echo "| **Commit**      | \`${{ github.sha }}\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| **Triggered by**| @${{ github.actor }}                          |" >> $GITHUB_STEP_SUMMARY
+          echo "| **Status (ENV)**| ${{ env.BUILD_STATUS }}                   |" >> $GITHUB_STEP_SUMMARY # Access ENV var set in previous step
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Metadata generation step completed." >> $GITHUB_STEP_SUMMARY
+
+  # =============================================
+  # Job 2: Simulate Processing & Richer Output
+  # =============================================
+  process_and_report:
+    name: 📊 Process & Report Results
+    runs-on: ubuntu-latest
+    needs: generate_metadata # Depends on the first job
+
+    steps:
+      - name: 📥 Receive Metadata (Job Output)
+        run: |
+          echo "Received from previous job:"
+          echo "- Version: ${{ needs.generate_metadata.outputs.build_version }}"
+          echo "- Build ID: ${{ needs.generate_metadata.outputs.build_id }}"
+          echo "- Status Check: ${{ needs.generate_metadata.outputs.build_status_env }}"
+          sleep 1 # Simulate work
+
+      - name: 📄 Create Fake Report File
+        run: |
+          echo "Creating a dummy report file..."
+          mkdir -p ./fake_reports
+          echo '{' > ./fake_reports/summary.json
+          echo '  "version": "${{ needs.generate_metadata.outputs.build_version }}",' >> ./fake_reports/summary.json
+          echo '  "buildId": "${{ needs.generate_metadata.outputs.build_id }}",' >> ./fake_reports/summary.json
+          echo '  "tests_passed": 142,' >> ./fake_reports/summary.json
+          echo '  "tests_failed": 3,' >> ./fake_reports/summary.json
+          echo '  "tests_skipped": 5,' >> ./fake_reports/summary.json
+          echo '  "coverage": "88%",' >> ./fake_reports/summary.json
+          echo '  "status": "Warning"' >> ./fake_reports/summary.json
+          echo '}' >> ./fake_reports/summary.json
+          echo "Dummy report created at ./fake_reports/summary.json"
+          sleep 1 # Simulate work
+
+      - name: 📢 Add Annotations
+        run: |
+          echo "Adding some example annotations..."
+          # These appear in the "Annotations" section of the run and sometimes on the code diff
+          echo "::notice file=src/fake_module.js,line=10,col=5::ℹ️ Just an informational notice about this line."
+          echo "::warning file=src/another_fake.js,line=35::⚠️ Consider refactoring this section for clarity."
+          echo "::error file=test/old_test.js,line=1,title=Deprecated Test Found::⛔ This test file uses a deprecated library."
+          sleep 1 # Simulate work
+
+      - name: ✍️ Add More Details to Summary
+        run: |
+          echo "" >> $GITHUB_STEP_SUMMARY # Add separation
+          echo "---" >> $GITHUB_STEP_SUMMARY # Horizontal rule
+          echo "## 📊 Simulated Processing Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Processing completed for Build ID: \`${{ needs.generate_metadata.outputs.build_id }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Test Simulation" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Passed: 142" >> $GITHUB_STEP_SUMMARY
+          echo "- ❌ Failed: 3" >> $GITHUB_STEP_SUMMARY
+          echo "- ⏭️ Skipped: 5" >> $GITHUB_STEP_SUMMARY
+          echo "- 🎯 Coverage: 88%" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Code Quality Notes" >> $GITHUB_STEP_SUMMARY
+          echo "- 📢 Check the **Annotations** section for details (1 notice, 1 warning, 1 error reported)." >> $GITHUB_STEP_SUMMARY
+          echo "- A detailed report (\`summary.json\`) is available as a build artifact." >> $GITHUB_STEP_SUMMARY
+
+      - name: ⬆️ Upload Fake Report Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-analysis-report-${{ needs.generate_metadata.outputs.build_id }} # Artifact name
+          path: ./fake_reports/summary.json # Path to the file(s) to upload
+          retention-days: 7 # Optional: How long to keep the artifact
+
+      - name: 🎉 Final Log Message
+        run: echo "All demonstration steps complete!"
