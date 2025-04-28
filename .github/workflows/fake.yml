@@ -26,8 +26,10 @@ jobs:
           FAKE_VERSION="1.5.${{ github.run_number }}"
           FAKE_ID="build-$(date +%s)-${RANDOM}"
           echo "Simulating setting build info..."
-          echo "version=${FAKE_VERSION}" >> $GITHUB_OUTPUT
-          echo "unique_id=${FAKE_ID}" >> $GITHUB_OUTPUT
+          cat << EOF >> $GITHUB_OUTPUT
+          version=${FAKE_VERSION}
+          unique_id=${FAKE_ID}
+          EOF
           echo "Generated Version: ${FAKE_VERSION}"
           echo "Generated ID: ${FAKE_ID}"
           sleep 1 # Simulate work
@@ -37,24 +39,29 @@ jobs:
         run: |
           STATUS_MESSAGE="✅ Simulated Success"
           echo "Setting BUILD_STATUS environment variable..."
-          echo "BUILD_STATUS=${STATUS_MESSAGE}" >> $GITHUB_ENV
-          # Also make it available as a step output if needed elsewhere
-          echo "status_msg=${STATUS_MESSAGE}" >> $GITHUB_OUTPUT
+          cat << EOF >> $GITHUB_ENV
+          BUILD_STATUS=${STATUS_MESSAGE}
+          EOF
+          cat << EOF >> $GITHUB_OUTPUT
+          status_msg=${STATUS_MESSAGE}
+          EOF
           sleep 1 # Simulate work
 
       - name: 📝 Add Initial Info to Summary
         run: |
-          echo "## 🚀 Build Metadata Generation" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY # Blank line for spacing
-          echo "| Key             | Value                                     |" >> $GITHUB_STEP_SUMMARY
-          echo "|-----------------|-------------------------------------------|" >> $GITHUB_STEP_SUMMARY
-          echo "| **Version**     | \`${{ steps.set_info.outputs.version }}\`          |" >> $GITHUB_STEP_SUMMARY
-          echo "| **Build ID**    | \`${{ steps.set_info.outputs.unique_id }}\`    |" >> $GITHUB_STEP_SUMMARY
-          echo "| **Commit**      | \`${{ github.sha }}\` |" >> $GITHUB_STEP_SUMMARY
-          echo "| **Triggered by**| @${{ github.actor }}                          |" >> $GITHUB_STEP_SUMMARY
-          echo "| **Status (ENV)**| ${{ env.BUILD_STATUS }}                   |" >> $GITHUB_STEP_SUMMARY # Access ENV var set in previous step
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "Metadata generation step completed." >> $GITHUB_STEP_SUMMARY
+          cat << EOF >> $GITHUB_STEP_SUMMARY
+          ## 🚀 Build Metadata Generation
+
+          | Key             | Value                                     |
+          |-----------------|-------------------------------------------|
+          | **Version**     | \`${{ steps.set_info.outputs.version }}\`          |
+          | **Build ID**    | \`${{ steps.set_info.outputs.unique_id }}\`    |
+          | **Commit**      | \`${{ github.sha }}\` |
+          | **Triggered by**| @${{ github.actor }}                          |
+          | **Status (ENV)**| ${{ env.BUILD_STATUS }}                   |
+
+          Metadata generation step completed.
+          EOF
 
   # =============================================
   # Job 2: Simulate Processing & Richer Output
@@ -67,54 +74,61 @@ jobs:
     steps:
       - name: 📥 Receive Metadata (Job Output)
         run: |
-          echo "Received from previous job:"
-          echo "- Version: ${{ needs.generate_metadata.outputs.build_version }}"
-          echo "- Build ID: ${{ needs.generate_metadata.outputs.build_id }}"
-          echo "- Status Check: ${{ needs.generate_metadata.outputs.build_status_env }}"
+          cat << EOF
+          Received from previous job:
+          - Version: ${{ needs.generate_metadata.outputs.build_version }}
+          - Build ID: ${{ needs.generate_metadata.outputs.build_id }}
+          - Status Check: ${{ needs.generate_metadata.outputs.build_status_env }}
+          EOF
           sleep 1 # Simulate work
 
       - name: 📄 Create Fake Report File
         run: |
           echo "Creating a dummy report file..."
           mkdir -p ./fake_reports
-          echo '{' > ./fake_reports/summary.json
-          echo '  "version": "${{ needs.generate_metadata.outputs.build_version }}",' >> ./fake_reports/summary.json
-          echo '  "buildId": "${{ needs.generate_metadata.outputs.build_id }}",' >> ./fake_reports/summary.json
-          echo '  "tests_passed": 142,' >> ./fake_reports/summary.json
-          echo '  "tests_failed": 3,' >> ./fake_reports/summary.json
-          echo '  "tests_skipped": 5,' >> ./fake_reports/summary.json
-          echo '  "coverage": "88%",' >> ./fake_reports/summary.json
-          echo '  "status": "Warning"' >> ./fake_reports/summary.json
-          echo '}' >> ./fake_reports/summary.json
+          cat << EOF > ./fake_reports/summary.json
+          {
+            "version": "${{ needs.generate_metadata.outputs.build_version }}",
+            "buildId": "${{ needs.generate_metadata.outputs.build_id }}",
+            "tests_passed": 142,
+            "tests_failed": 3,
+            "tests_skipped": 5,
+            "coverage": "88%",
+            "status": "Warning"
+          }
+          EOF
           echo "Dummy report created at ./fake_reports/summary.json"
           sleep 1 # Simulate work
 
       - name: 📢 Add Annotations
         run: |
-          echo "Adding some example annotations..."
-          # These appear in the "Annotations" section of the run and sometimes on the code diff
-          echo "::notice file=src/fake_module.js,line=10,col=5::ℹ️ Just an informational notice about this line."
-          echo "::warning file=src/another_fake.js,line=35::⚠️ Consider refactoring this section for clarity."
-          echo "::error file=test/old_test.js,line=1,title=Deprecated Test Found::⛔ This test file uses a deprecated library."
+          cat << 'EOF'
+          Adding some example annotations...
+          ::notice file=src/fake_module.js,line=10,col=5::ℹ️ Just an informational notice about this line.
+          ::warning file=src/another_fake.js,line=35::⚠️ Consider refactoring this section for clarity.
+          ::error file=test/old_test.js,line=1,title=Deprecated Test Found::⛔ This test file uses a deprecated library.
+          EOF
           sleep 1 # Simulate work
 
       - name: ✍️ Add More Details to Summary
         run: |
-          echo "" >> $GITHUB_STEP_SUMMARY # Add separation
-          echo "---" >> $GITHUB_STEP_SUMMARY # Horizontal rule
-          echo "## 📊 Simulated Processing Results" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "Processing completed for Build ID: \`${{ needs.generate_metadata.outputs.build_id }}\`" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "### Test Simulation" >> $GITHUB_STEP_SUMMARY
-          echo "- ✅ Passed: 142" >> $GITHUB_STEP_SUMMARY
-          echo "- ❌ Failed: 3" >> $GITHUB_STEP_SUMMARY
-          echo "- ⏭️ Skipped: 5" >> $GITHUB_STEP_SUMMARY
-          echo "- 🎯 Coverage: 88%" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "### Code Quality Notes" >> $GITHUB_STEP_SUMMARY
-          echo "- 📢 Check the **Annotations** section for details (1 notice, 1 warning, 1 error reported)." >> $GITHUB_STEP_SUMMARY
-          echo "- A detailed report (\`summary.json\`) is available as a build artifact." >> $GITHUB_STEP_SUMMARY
+          cat << EOF >> $GITHUB_STEP_SUMMARY
+
+          ---
+          ## 📊 Simulated Processing Results
+
+          Processing completed for Build ID: \`${{ needs.generate_metadata.outputs.build_id }}\`
+
+          ### Test Simulation
+          - ✅ Passed: 142
+          - ❌ Failed: 3
+          - ⏭️ Skipped: 5
+          - 🎯 Coverage: 88%
+
+          ### Code Quality Notes
+          - 📢 Check the **Annotations** section for details (1 notice, 1 warning, 1 error reported).
+          - A detailed report (\`summary.json\`) is available as a build artifact.
+          EOF
 
       - name: ⬆️ Upload Fake Report Artifact
         uses: actions/upload-artifact@v4
